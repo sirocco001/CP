@@ -1,5 +1,5 @@
 //José Manuel Turnes Pazos DNI:78809381-L
-//Javier González Rodriguez DNI:
+//Javier González Rodriguez DNI:32722360-F
 
 #include <stdio.h>
 #include <stdlib.h>
