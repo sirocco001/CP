@@ -13,7 +13,7 @@ int MPI_BinomialBcast(void *buff,int count,MPI_Datatype datatype,int root,MPI_Co
 	MPI_Comm_size (comm , &numprocs );
     MPI_Comm_rank (comm , &rank );
 	printf("%d",numprocs);
-	for(i=0;i<ceil(sqrt(numprocs));i++){
+	for(i=0;i<ceil(log(numprocs)/log(2));i++){
 		aux=pow(2,i-1);
 		if(rank<aux){
 			if(rank+aux<numprocs){
