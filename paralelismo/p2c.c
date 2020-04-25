@@ -12,39 +12,40 @@ int MPI_BinomialColectiva(void *buff,int count,MPI_Datatype datatype,int root,MP
 	MPI_Status status;
 	MPI_Comm_size (comm , &numprocs );
     MPI_Comm_rank (comm , &rank );
-	for(i=0;i<ceil(log(numprocs)/log(2));i++){
-		aux=pow(2,i);
+	for(i=0;i<numprocs/2;i++){
+		aux=pow(2,i-1);
 		if(rank<aux){
-			if(rank+aux<numprocs){
 				MPI_Send(buff,count,datatype,rank+aux,0,comm);
-			}
-		}else if(rank>=aux && rank<aux+aux-1){
+		}else
 			MPI_Recv(buff,count,datatype,rank-aux,0,comm,&status);
-		}
 		MPI_Barrier(comm);
 	}
 }
 
 int MPI_FlattreeColectiva(void *buff,int count,MPI_Datatype datatype,int root,MPI_Comm comm){
 	
-	int i,numprocs,rank,parcial;
+	int i,aux,numprocs,rank,parcial;
 	MPI_Status status;
 	MPI_Comm_size (comm , &numprocs );
     MPI_Comm_rank (comm , &rank );
     
     parcial = 0 ;
-
+    aux=0;
 
     if (rank!=0){
 		MPI_Send(buff,count,datatype,0,1,comm);
 		
 	}else{
 			for (i=0;i<numprocs-1;i++){
-				MPI_Recv(&parcial,count,datatype,MPI_ANY_SOURCE,1,comm,&status);
-				*(int*)buff+=parcial;
+				if(MPI_Recv(&parcial,count,datatype,MPI_ANY_SOURCE,1,comm,&status)==0){
+					aux=0;
+					*(int*)buff+=parcial;
+				}
+				else
+					aux=1;
 			}
 	}
-
+	return aux;
 }
 
 int main(int argc, char *argv[])
@@ -62,7 +63,7 @@ int main(int argc, char *argv[])
         	printf("Enter the maximum number to check for primes: (0 quits) \n");
         	scanf("%d",&n);
 		}
-		MPI_Bcast(&n,1,MPI_INT,0,MPI_COMM_WORLD);
+		MPI_BinomialColectiva(&n,1,MPI_INT,0,MPI_COMM_WORLD);
         
         if (n == 0) break;
 
@@ -89,3 +90,4 @@ int main(int argc, char *argv[])
     	MPI_Barrier(MPI_COMM_WORLD);
 		MPI_Finalize();
 }
+
