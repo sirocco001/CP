@@ -13,7 +13,7 @@ int MPI_BinomialColectiva(void *buff,int count,MPI_Datatype datatype,int root,MP
 	MPI_Comm_size (comm , &numprocs );
     MPI_Comm_rank (comm , &rank );
 	for(i=0;i<(log(numprocs)/log(2));i++){
-		aux=pow(2,i-1);
+		aux=pow(2,i);
 		if(rank<aux && rank+aux<numprocs){
 			if(rank+aux<numprocs){
 				MPI_Send(buff,count,datatype,rank+aux,0,comm);
