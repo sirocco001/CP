@@ -12,17 +12,19 @@ int MPI_BinomialColectiva(void *buff,int count,MPI_Datatype datatype,int root,MP
 	MPI_Status status;
 	MPI_Comm_size (comm , &numprocs );
     MPI_Comm_rank (comm , &rank );
-
-	for(i=0;i<numprocs/2;i++){
-		if (rank!=0)
-    		MPI_Recv(buff,count,datatype,rank-aux,0,comm,&status);
+	for(i=0;i<(log(numprocs)/log(2));i++){
 		aux=pow(2,i-1);
-		if(rank<aux){
+		if(rank<aux && rank+aux<numprocs){
+			if(rank+aux<numprocs){
 				MPI_Send(buff,count,datatype,rank+aux,0,comm);
+			}
+		}else if(rank>=aux && rank<aux+aux-1){
+			MPI_Recv(buff,count,datatype,rank-aux,0,comm,&status);
 		}
 		MPI_Barrier(comm);
 	}
 }
+
 
 int MPI_FlattreeColectiva(void *buff,int count,MPI_Datatype datatype,int root,MPI_Comm comm){
 	
@@ -92,3 +94,4 @@ int main(int argc, char *argv[])
     	MPI_Barrier(MPI_COMM_WORLD);
 		MPI_Finalize();
 }
+
