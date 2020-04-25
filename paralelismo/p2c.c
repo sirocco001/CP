@@ -27,7 +27,7 @@ int MPI_BinomialColectiva(void *buff,int count,MPI_Datatype datatype,int root,MP
 
 int MPI_FlattreeColectiva(void *buff,int count,MPI_Datatype datatype,int root,MPI_Comm comm){
 	
-	int numprocs,rank,parcial;
+	int i,numprocs,rank,parcial;
 	MPI_Status status;
 	MPI_Comm_size (comm , &numprocs );
     MPI_Comm_rank (comm , &rank );
@@ -39,9 +39,10 @@ int MPI_FlattreeColectiva(void *buff,int count,MPI_Datatype datatype,int root,MP
 		MPI_Send(buff,count,datatype,0,1,comm);
 		
 	}else{
-			MPI_Recv(&parcial,count,datatype,MPI_ANY_SOURCE,1,comm,&status);
-			*(int*)buff+=parcial;
-
+			for (i=0;i<numprocs-1;i++){
+				MPI_Recv(&parcial,count,datatype,MPI_ANY_SOURCE,1,comm,&status);
+				*(int*)buff+=parcial;
+			}
 	}
 
 }
@@ -88,4 +89,3 @@ int main(int argc, char *argv[])
     	MPI_Barrier(MPI_COMM_WORLD);
 		MPI_Finalize();
 }
-
