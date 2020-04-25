@@ -5,14 +5,14 @@
 #include <stdlib.h>
 #include <math.h>
 #include <mpi.h>
-
+// EJECUTAR CON -lm
 int MPI_BinomialColectiva(void *buff,int count,MPI_Datatype datatype,int root,MPI_Comm comm)
 {
 	int i,aux,numprocs,rank;
 	MPI_Status status;
 	MPI_Comm_size (comm , &numprocs );
     MPI_Comm_rank (comm , &rank );
-	for(i=0;i<(log(numprocs)/log(2));i++){
+	for(i=0;i<ceil(log(numprocs)/log(2));i++){
 		aux=pow(2,i);
 		if(rank<aux && rank+aux<numprocs){
 			if(rank+aux<numprocs){
