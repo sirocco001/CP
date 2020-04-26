@@ -18,7 +18,7 @@ int MPI_BinomialColectiva(void *buff,int count,MPI_Datatype datatype,int root,MP
 			if(rank+aux<numprocs){
 				MPI_Send(buff,count,datatype,rank+aux,0,comm);
 			}
-		}else if(rank>=aux && rank<aux+aux-1){
+		}else if(rank>=aux && rank<=aux+aux-1){
 			MPI_Recv(buff,count,datatype,rank-aux,0,comm,&status);
 		}
 		MPI_Barrier(comm);
