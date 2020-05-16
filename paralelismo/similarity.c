@@ -43,20 +43,21 @@ int base_distance(int base1, int base2){
         return 1;
     }
 
-    if((base2 == 2) && (base1 == 1)) {
+    if((base2 == 1) && (base1 == 2)) {
         return 1;
     }
 
 return 2;
 }
 
-int main(int argc, char *argv[] ) {
+int main(int argc, char *argv[] ) 
+{
 
-    int i, j, numprocs = 0, rank, limite;
-    int nfilasbloque=ceil(M/numprocs);
-    int data_aux1[nfilasbloque][N];
-    int data_aux2[nfilasbloque][N];
-    int res[nfilasbloque];
+    int i, j, numprocs, rank, limite;
+    int nfilasbloque;
+    int *data_aux1;
+    int *data_aux2;
+    int *res;
     int *data1, *data2;
     int *result;
     struct timeval  tv1, tv2;
@@ -65,13 +66,17 @@ int main(int argc, char *argv[] ) {
 	MPI_Init(&argc,&argv);
     MPI_Comm_size (MPI_COMM_WORLD , &numprocs );
     MPI_Comm_rank (MPI_COMM_WORLD , &rank );
-
+	
+	nfilasbloque=ceil(M/numprocs);
+	
     data1 = (int *) malloc(M*N*sizeof(int));
     data2 = (int *) malloc(M*N*sizeof(int));
     result = (int *) malloc(M*sizeof(int));
-    
-
-
+	
+    data_aux1 = (int *) malloc(nfilasbloque*N*sizeof(int));
+	data_aux2 = (int *) malloc(nfilasbloque*N*sizeof(int));
+	res = (int *) malloc(nfilasbloque*sizeof(int));
+	
   /* Initialize Matrices */
     if(rank==0){
         for(i=0;i<M;i++) {
@@ -118,7 +123,7 @@ int main(int argc, char *argv[] ) {
     }    
 
     free(data1); free(data2); free(result);
-
+	free(data_aux1); free(data_aux2); free(res);
 return 0;
 }
 
