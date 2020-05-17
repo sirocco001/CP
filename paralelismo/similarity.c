@@ -69,10 +69,12 @@ int main(int argc, char *argv[] )
     MPI_Comm_rank (MPI_COMM_WORLD , &rank );
 	
     nfilasbloque=ceil(M/numprocs);
-	
+
+
     data1 = (int *) malloc(M*N*sizeof(int));
     data2 = (int *) malloc(M*N*sizeof(int));
     result = (int *) malloc(M*sizeof(int));
+    
 	
     data_aux1 = (int *) malloc(nfilasbloque*N*sizeof(int));
     data_aux2 = (int *) malloc(nfilasbloque*N*sizeof(int));
@@ -105,7 +107,7 @@ int main(int argc, char *argv[] )
     for(i=0;i<limite;i++) {
         res[i]=0;
         for(j=0;j<N;j++) {
-            res[i] += base_distance(data1[i*N+j], data2[i*N+j]);
+            res[i] += base_distance(data_aux1[i*N+j], data_aux2[i*N+j]);
         }
     }
 
@@ -130,3 +132,4 @@ int main(int argc, char *argv[] )
     MPI_Finalize();
 return 0;
 }
+
