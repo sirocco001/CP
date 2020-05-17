@@ -124,7 +124,7 @@ int main(int argc, char *argv[] )
     tiempos_aux[1] = (tv4.tv_usec - tv3.tv_usec)+ 1000000 * (tv4.tv_sec - tv3.tv_sec);
     
     
-    if(MPI_Gather(tiempos_aux,2,MPI_INT,tiempos,nfilasbloque,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
+    if(MPI_Gather(tiempos_aux,2,MPI_INT,tiempos,2,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
 		fprintf(stderr,"Error proceso: %d\n", rank);
     
     if(rank==0){
