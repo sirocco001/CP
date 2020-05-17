@@ -1,3 +1,4 @@
+ 
 //José Manuel Turnes Pazos DNI:78809381-L
 //Javier González Rodriguez DNI:32722360-F
 
@@ -63,19 +64,19 @@ int main(int argc, char *argv[] )
     struct timeval  tv1, tv2;
     
   
-	MPI_Init(&argc,&argv);
+    MPI_Init(&argc,&argv);
     MPI_Comm_size (MPI_COMM_WORLD , &numprocs );
     MPI_Comm_rank (MPI_COMM_WORLD , &rank );
 	
-	nfilasbloque=ceil(M/numprocs);
+    nfilasbloque=ceil(M/numprocs);
 	
     data1 = (int *) malloc(M*N*sizeof(int));
     data2 = (int *) malloc(M*N*sizeof(int));
     result = (int *) malloc(M*sizeof(int));
 	
     data_aux1 = (int *) malloc(nfilasbloque*N*sizeof(int));
-	data_aux2 = (int *) malloc(nfilasbloque*N*sizeof(int));
-	res = (int *) malloc(nfilasbloque*sizeof(int));
+    data_aux2 = (int *) malloc(nfilasbloque*N*sizeof(int));
+    res = (int *) malloc(nfilasbloque*sizeof(int));
 	
   /* Initialize Matrices */
     if(rank==0){
@@ -85,19 +86,21 @@ int main(int argc, char *argv[] )
                 data2[i*N+j] = ((i-j)*(i-j))%5;
             }
         }
-	}
+    }
+    
+
 	
-	if(MPI_Scatter(data1,nfilasbloque*M,MPI_INT,data_aux1,nfilasbloque*M,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
-		fprintf(stderr,"Error proceso: %d\n", rank);
-	if(MPI_Scatter(data2,nfilasbloque*M,MPI_INT,data_aux2,nfilasbloque*M,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
-		fprintf(stderr,"Error proceso: %d\n", rank);
+    if(MPI_Scatter(data1,nfilasbloque*M,MPI_INT,data_aux1,nfilasbloque*M,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
+	    fprintf(stderr,"Error proceso: %d\n", rank);
+    if(MPI_Scatter(data2,nfilasbloque*M,MPI_INT,data_aux2,nfilasbloque*M,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
+	    fprintf(stderr,"Error proceso: %d\n", rank);
 	
     gettimeofday(&tv1, NULL);
-
-	if (rank == numprocs-1)
-		limite = M - nfilasbloque * (numprocs -1);
-	else
-		limite = nfilasbloque;
+    
+    if (rank == numprocs-1)
+	   limite = M - nfilasbloque * (numprocs -1); 
+    else
+	   limite = nfilasbloque;
 	
     for(i=0;i<limite;i++) {
         res[i]=0;
@@ -123,7 +126,7 @@ int main(int argc, char *argv[] )
     }    
 
     free(data1); free(data2); free(result);
-	free(data_aux1); free(data_aux2); free(res);
+    free(data_aux1); free(data_aux2); free(res);
+    MPI_Finalize();
 return 0;
 }
-
