@@ -70,8 +70,8 @@ int main(int argc, char *argv[] )
     nfilasbloque=ceil((float)M/numprocs);
 
 
-    data1 = (int *) malloc(M*N*numprocs*sizeof(int));
-    data2 = (int *) malloc(M*N*numprocs*sizeof(int));
+    data1 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
+    data2 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
     result = (int *) malloc(M*sizeof(int));
     
 	
@@ -132,4 +132,3 @@ int main(int argc, char *argv[] )
     MPI_Finalize();
 return 0;
 }
-
