@@ -70,12 +70,6 @@ int main(int argc, char *argv[] )
     MPI_Comm_rank (MPI_COMM_WORLD , &rank );
 	
     nfilasbloque=ceil((float)M/numprocs);
-
-
-    data1 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
-    data2 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
-    result = (int *) malloc(M*sizeof(int));
-    tiempos= (int *) malloc(numprocs*2*sizeof(int));
     
 	
     data_aux1 = (int *) malloc(nfilasbloque*N*sizeof(int));
@@ -85,6 +79,10 @@ int main(int argc, char *argv[] )
 	
   /* Initialize Matrices */
     if(rank==0){
+ 	data1 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
+    	data2 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
+    	result = (int *) malloc(M*sizeof(int));
+    	tiempos= (int *) malloc(numprocs*2*sizeof(int));    
         for(i=0;i<M;i++) {
             for(j=0;j<N;j++) {
                 data1[i*N+j] = (i+j)%5;
@@ -136,10 +134,10 @@ int main(int argc, char *argv[] )
 	    }
 	}    
     
-	free(data1); free(data2); free(result);
+	free(data1); free(data2); free(result); free(tiempos);
     }
 	
-	free(data_aux1); free(data_aux2); free(res);
+	free(data_aux1); free(data_aux2); free(res); free(tiempos_aux);
     MPI_Finalize();
 return 0;
 }
