@@ -116,9 +116,9 @@ int main(int argc, char *argv[] )
 		fprintf(stderr,"Error proceso: %d\n", rank);
     gettimeofday(&tv2, NULL);
     
-
-    tiempos_aux[1] = (tv4.tv_usec - tv3.tv_usec)+ 1000000 * (tv4.tv_sec - tv3.tv_sec);
     tiempos_aux[0] = ((tv2.tv_usec - tv1.tv_usec)+ 1000000 * (tv2.tv_sec - tv1.tv_sec))-((tv4.tv_usec - tv3.tv_usec)+ 1000000 * (tv4.tv_sec - tv3.tv_sec));
+    tiempos_aux[1] = (tv4.tv_usec - tv3.tv_usec)+ 1000000 * (tv4.tv_sec - tv3.tv_sec);
+    
     
     if(MPI_Gather(tiempos_aux,2,MPI_INT,tiempos,nfilasbloque,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
 		fprintf(stderr,"Error proceso: %d\n", rank);
@@ -131,8 +131,8 @@ int main(int argc, char *argv[] )
 	    }
 	} else {
 	    for(i=0;i<numprocs*2;i+=2){
-		printf ("Comunication time (seconds) = %lf\n", (double) tiempos[i+1]/1E6);
 		printf ("Computation time (seconds) = %lf\n", (double) tiempos[i]/1E6);
+		printf ("Comunication time (seconds) = %lf\n", (double) tiempos[i+1]/1E6);
 	    }
 	}    
     
