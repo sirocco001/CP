@@ -124,10 +124,10 @@ int main(int argc, char *argv[] )
 	    printf ("Time (seconds) = %lf\n", (double) microseconds/1E6);
 	}    
     
-	free(data1); free(data2); free(result);
-	free(data_aux1); free(data_aux2); free(res);
+	free(data1); free(data2); free(result);free(res);
     }
+	
+	free(data_aux1); free(data_aux2); 
     MPI_Finalize();
 return 0;
 }
-
