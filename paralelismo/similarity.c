@@ -135,8 +135,8 @@ int main(int argc, char *argv[] )
 	    }
 	} else {
 	    for(i=0;i<numprocs*2;i+=2){
-		printf ("Process %d Computation time (seconds) = %lf\n", i/2,(double) tiempos[i]/1E6);
-		printf ("Process %d Comunication time (seconds) = %lf\n", i/2,(double) tiempos[i+1]/1E6);
+		printf ("Process %d Comunication time (seconds) = %lf\n", i/2,(double) tiempos[i]/1E6);
+		printf ("Process %d Computation time (seconds) = %lf\n", i/2,(double) tiempos[i+1]/1E6);
 	    }
 	}    
     
@@ -147,3 +147,4 @@ int main(int argc, char *argv[] )
     MPI_Finalize();
 return 0;
 }
+
