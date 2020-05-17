@@ -55,7 +55,7 @@ return 2;
 int main(int argc, char *argv[] ) 
 {
 
-    int i, j, numprocs, rank;
+    int i, j, numprocs, rank, limite;
     int nfilasbloque;
     int *tiempos;
     int *tiempos_aux;
@@ -96,6 +96,10 @@ int main(int argc, char *argv[] )
         }
     }
     
+    if(rank == numprocs-1){
+	limite = M - nfilasbloque * (numprocs-1);
+    }else
+	limite = nfilasbloque;
 
 	
     if(gettimeofday(&tv1, NULL)!=0)
@@ -107,7 +111,7 @@ int main(int argc, char *argv[] )
 	    fprintf(stderr,"Error proceso: %d\n", rank);
 
     gettimeofday(&tv3, NULL);
-    for(i=0;i<nfilasbloque;i++) {
+    for(i=0;i<limite;i++) {
         res[i]=0;
         for(j=0;j<N;j++) {
             res[i] += base_distance(data_aux1[i*N+j], data_aux2[i*N+j]);
