@@ -6,7 +6,9 @@
 #include <sys/time.h>
 #include <mpi.h>
 #include <math.h>
-
+#include <errno.h>
+#include <string.h>
+ 
 #define DEBUG 0
 
 /* Translation of the DNA bases
@@ -72,10 +74,7 @@ int main(int argc, char *argv[] )
     nfilasbloque=ceil((float)M/numprocs);
 
 
-    data1 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
-    data2 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
-    result = (int *) malloc(M*sizeof(int));
-    tiempos= (int *) malloc(numprocs*2*sizeof(int));
+
     
 	
     data_aux1 = (int *) malloc(nfilasbloque*N*sizeof(int));
@@ -85,6 +84,10 @@ int main(int argc, char *argv[] )
 	
   /* Initialize Matrices */
     if(rank==0){
+	data1 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
+    	data2 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
+    	result = (int *) malloc(M*sizeof(int));
+    	tiempos= (int *) malloc(numprocs*2*sizeof(int));
         for(i=0;i<M;i++) {
             for(j=0;j<N;j++) {
                 data1[i*N+j] = (i+j)%5;
@@ -95,7 +98,8 @@ int main(int argc, char *argv[] )
     
 
 	
-    gettimeofday(&tv1, NULL);
+    if(gettimeofday(&tv1, NULL)!=0)
+		printf("%s",strerror(errno));
     
     if(MPI_Scatter(data1,nfilasbloque*N,MPI_INT,data_aux1,nfilasbloque*N,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
 	    fprintf(stderr,"Error proceso: %d\n", rank);
@@ -116,7 +120,7 @@ int main(int argc, char *argv[] )
 		fprintf(stderr,"Error proceso: %d\n", rank);
     gettimeofday(&tv2, NULL);
     
-    tiempos_aux[0] = ((tv3.tv_usec - tv1.tv_usec)+ 1000000 * (tv3.tv_sec - tv1.tv_sec))+((tv2.tv_usec - tv4.tv_usec)+ 1000000 * (tv2.tv_sec - tv4.tv_sec));
+    tiempos_aux[0] = ((tv2.tv_usec - tv1.tv_usec)+ 1000000 * (tv2.tv_sec - tv1.tv_sec))-((tv4.tv_usec - tv3.tv_usec)+ 1000000 * (tv4.tv_sec - tv3.tv_sec));
     tiempos_aux[1] = (tv4.tv_usec - tv3.tv_usec)+ 1000000 * (tv4.tv_sec - tv3.tv_sec);
     
     
@@ -131,15 +135,15 @@ int main(int argc, char *argv[] )
 	    }
 	} else {
 	    for(i=0;i<numprocs*2;i+=2){
-		printf ("Process %d Comunication time (seconds) = %lf\n", i/2,(double) tiempos[i]/1E6);
-		printf ("Process %d Computation time (seconds) = %lf\n", i/2,(double) tiempos[i+1]/1E6);
+		printf ("Process %d Computation time (seconds) = %lf\n", i/2,(double) tiempos[i]/1E6);
+		printf ("Process %d Comunication time (seconds) = %lf\n", i/2,(double) tiempos[i+1]/1E6);
 	    }
 	}    
     
-	free(data1); free(data2); free(result); free(tiempos);
+	free(data1); free(data2); free(result);free(tiempos);
     }
 	
-	free(data_aux1); free(data_aux2); free(res); free(tiempos_aux);
+	free(data_aux1); free(data_aux2); free(res);free(tiempos_aux);
     MPI_Finalize();
 return 0;
 }
