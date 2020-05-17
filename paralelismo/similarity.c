@@ -53,7 +53,7 @@ return 2;
 int main(int argc, char *argv[] ) 
 {
 
-    int i, j, numprocs, rank, limite;
+    int i, j, numprocs, rank;
     int nfilasbloque;
     int *data_aux1;
     int *data_aux2;
@@ -98,13 +98,9 @@ int main(int argc, char *argv[] )
 	    fprintf(stderr,"Error proceso: %d\n", rank);
     if(MPI_Scatter(data2,nfilasbloque*N,MPI_INT,data_aux2,nfilasbloque*N,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
 	    fprintf(stderr,"Error proceso: %d\n", rank);
-    
-    if (rank == numprocs-1)
-	   limite = M - nfilasbloque * (numprocs -1); 
-    else
-	   limite = nfilasbloque;
-	
-    for(i=0;i<limite;i++) {
+
+
+    for(i=0;i<nfilasbloque;i++) {
         res[i]=0;
         for(j=0;j<N;j++) {
             res[i] += base_distance(data_aux1[i*N+j], data_aux2[i*N+j]);
@@ -118,17 +114,20 @@ int main(int argc, char *argv[] )
     
     int microseconds = (tv2.tv_usec - tv1.tv_usec)+ 1000000 * (tv2.tv_sec - tv1.tv_sec);
 
+    if(rank==0){
     /*Display result */
-    if (DEBUG){
-        for(i=0;i<M;i++) {
-            printf(" %d \t ",result[i]);
-        }
-    } else {
-        printf ("Time (seconds) = %lf\n", (double) microseconds/1E6);
-    }    
-
-    free(data1); free(data2); free(result);
-    free(data_aux1); free(data_aux2); free(res);
+	if (DEBUG){
+	    for(i=0;i<M;i++) {
+		printf(" %d \t ",result[i]);
+	    }
+	} else {
+	    printf ("Time (seconds) = %lf\n", (double) microseconds/1E6);
+	}    
+    
+	free(data1); free(data2); free(result);
+	free(data_aux1); free(data_aux2); free(res);
+    }
     MPI_Finalize();
 return 0;
 }
+
