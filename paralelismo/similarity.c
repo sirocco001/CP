@@ -1,4 +1,3 @@
- 
 //José Manuel Turnes Pazos DNI:78809381-L
 //Javier González Rodriguez DNI:32722360-F
 
@@ -78,7 +77,8 @@ int main(int argc, char *argv[] )
 	
     data_aux1 = (int *) malloc(nfilasbloque*N*sizeof(int));
     data_aux2 = (int *) malloc(nfilasbloque*N*sizeof(int));
-    res = (int *) malloc(nfilasbloque*sizeof(int));
+    if(rank==0)
+	res = (int *) malloc(nfilasbloque*sizeof(int));
 	
   /* Initialize Matrices */
     if(rank==0){
