@@ -67,7 +67,7 @@ int main(int argc, char *argv[] )
     MPI_Comm_size (MPI_COMM_WORLD , &numprocs );
     MPI_Comm_rank (MPI_COMM_WORLD , &rank );
 	
-    nfilasbloque=ceil(M/numprocs);
+    nfilasbloque=ceil((float)M/numprocs);
 
 
     data1 = (int *) malloc(M*N*sizeof(int));
@@ -75,8 +75,8 @@ int main(int argc, char *argv[] )
     result = (int *) malloc(M*sizeof(int));
     
 	
-    data_aux1 = (int *) malloc(nfilasbloque*N*sizeof(int));
-    data_aux2 = (int *) malloc(nfilasbloque*N*sizeof(int));
+    data_aux1 = (int *) malloc(nfilasbloque*numprocs*N*sizeof(int));
+    data_aux2 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
     if(rank==0)
 	res = (int *) malloc(nfilasbloque*sizeof(int));
 	
@@ -92,12 +92,12 @@ int main(int argc, char *argv[] )
     
 
 	
-    if(MPI_Scatter(data1,nfilasbloque*M,MPI_INT,data_aux1,nfilasbloque*M,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
-	    fprintf(stderr,"Error proceso: %d\n", rank);
-    if(MPI_Scatter(data2,nfilasbloque*M,MPI_INT,data_aux2,nfilasbloque*M,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
-	    fprintf(stderr,"Error proceso: %d\n", rank);
-	
     gettimeofday(&tv1, NULL);
+    
+    if(MPI_Scatter(data1,nfilasbloque*N,MPI_INT,data_aux1,nfilasbloque*N,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
+	    fprintf(stderr,"Error proceso: %d\n", rank);
+    if(MPI_Scatter(data2,nfilasbloque*N,MPI_INT,data_aux2,nfilasbloque*N,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
+	    fprintf(stderr,"Error proceso: %d\n", rank);
     
     if (rank == numprocs-1)
 	   limite = M - nfilasbloque * (numprocs -1); 
@@ -132,4 +132,3 @@ int main(int argc, char *argv[] )
     MPI_Finalize();
 return 0;
 }
-
