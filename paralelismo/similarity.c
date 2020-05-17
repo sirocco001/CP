@@ -70,6 +70,12 @@ int main(int argc, char *argv[] )
     MPI_Comm_rank (MPI_COMM_WORLD , &rank );
 	
     nfilasbloque=ceil((float)M/numprocs);
+
+
+    data1 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
+    data2 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
+    result = (int *) malloc(M*sizeof(int));
+    tiempos= (int *) malloc(numprocs*2*sizeof(int));
     
 	
     data_aux1 = (int *) malloc(nfilasbloque*N*sizeof(int));
@@ -79,10 +85,6 @@ int main(int argc, char *argv[] )
 	
   /* Initialize Matrices */
     if(rank==0){
- 	data1 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
-    	data2 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
-    	result = (int *) malloc(M*sizeof(int));
-    	tiempos= (int *) malloc(numprocs*2*sizeof(int));    
         for(i=0;i<M;i++) {
             for(j=0;j<N;j++) {
                 data1[i*N+j] = (i+j)%5;
@@ -129,15 +131,16 @@ int main(int argc, char *argv[] )
 	    }
 	} else {
 	    for(i=0;i<numprocs*2;i+=2){
-		printf ("Process%d",rank/2," Computation time (seconds) = %lf\n", (double) tiempos[i]/1E6);
-		printf ("Process%d",rank/2," Comunication time (seconds) = %lf\n", (double) tiempos[i+1]/1E6);
+		printf ("Process%d"," Computation time (seconds) = %lf\n", i/2,(double) tiempos[i]/1E6);
+		printf ("Process%d"," Comunication time (seconds) = %lf\n", i/2,(double) tiempos[i+1]/1E6);
 	    }
 	}    
     
-	free(data1); free(data2); free(result); free(tiempos);
+	free(data1); free(data2); free(result);
     }
 	
-	free(data_aux1); free(data_aux2); free(res); free(tiempos_aux);
+	free(data_aux1); free(data_aux2); free(res);
     MPI_Finalize();
 return 0;
 }
+
