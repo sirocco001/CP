@@ -130,7 +130,10 @@ int main(int argc, char *argv[] )
 		printf(" %d \t ",result[i]);
 	    }
 	} else {
-	    printf ("Time (seconds) = %lf\n", (double) microseconds/1E6);
+	    for(i=0;i<numprocs-1;i+=2){
+		printf ("Comunication time (seconds) = %lf\n", (double) tiempos[i+1]/1E6);
+		printf ("Computation time (seconds) = %lf\n", (double) tiempos[i]/1E6);
+	    }
 	}    
     
 	free(data1); free(data2); free(result);
@@ -140,4 +143,3 @@ int main(int argc, char *argv[] )
     MPI_Finalize();
 return 0;
 }
-
