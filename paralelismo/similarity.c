@@ -7,7 +7,7 @@
 #include <mpi.h>
 #include <math.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 /* Translation of the DNA bases
    A -> 0
@@ -55,12 +55,14 @@ int main(int argc, char *argv[] )
 
     int i, j, numprocs, rank;
     int nfilasbloque;
+    int *tiempos;
+    int *tiempos_aux;
     int *data_aux1;
     int *data_aux2;
     int *res;
     int *data1, *data2;
     int *result;
-    struct timeval  tv1, tv2;
+    struct timeval  tv1, tv2, tv3, tv4;
     
   
     MPI_Init(&argc,&argv);
@@ -73,11 +75,13 @@ int main(int argc, char *argv[] )
     data1 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
     data2 = (int *) malloc(nfilasbloque*N*numprocs*sizeof(int));
     result = (int *) malloc(M*sizeof(int));
+    tiempos= (int *) malloc(numprocs*2*sizeof(int));
     
 	
     data_aux1 = (int *) malloc(nfilasbloque*N*sizeof(int));
     data_aux2 = (int *) malloc(nfilasbloque*N*sizeof(int));
     res = (int *) malloc(nfilasbloque*sizeof(int));
+    tiempos_aux=(int *) malloc (2*sizeof(int));
 	
   /* Initialize Matrices */
     if(rank==0){
@@ -98,20 +102,22 @@ int main(int argc, char *argv[] )
     if(MPI_Scatter(data2,nfilasbloque*N,MPI_INT,data_aux2,nfilasbloque*N,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
 	    fprintf(stderr,"Error proceso: %d\n", rank);
 
-
+    gettimeofday(&tv3, NULL);
     for(i=0;i<nfilasbloque;i++) {
         res[i]=0;
         for(j=0;j<N;j++) {
             res[i] += base_distance(data_aux1[i*N+j], data_aux2[i*N+j]);
         }
     }
+    gettimeofday(&tv4, NULL);
 
     gettimeofday(&tv2, NULL);
     
     if(MPI_Gather(res,nfilasbloque,MPI_INT,result,nfilasbloque,MPI_INT,0,MPI_COMM_WORLD)!=MPI_SUCCESS)
 		fprintf(stderr,"Error proceso: %d\n", rank);
     
-    int microseconds = (tv2.tv_usec - tv1.tv_usec)+ 1000000 * (tv2.tv_sec - tv1.tv_sec);
+    tiempos_aux[0] = (tv2.tv_usec - tv1.tv_usec)+ 1000000 * (tv2.tv_sec - tv1.tv_sec);
+    tiempos_aux[1] = (tv4.tv_usec - tv3.tv_usec)+ 1000000 * (tv4.tv_sec - tv3.tv_sec);
 
     if(rank==0){
     /*Display result */
